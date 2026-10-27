@@ -1,0 +1,134 @@
+# Study 2 registration: is gambling better than memecoin trading without insider information?
+
+Status: FROZEN 2026-09-23. Frozen (sha256 in `FREEZE.txt`) before any per-wallet or per-position profit or loss is computed. Study 1 (`REGISTRATION.md`, random bets) is the baseline and stays as reported.
+
+## Question
+
+On pump.fun, do traders who have no insider information get back less per SOL wagered, and end ahead less often, than a gambler playing standard casino games with the same stakes?
+
+## Population
+
+Every wallet that bought or sold any Study 1 census token (launched 2026-08-08 21:16 to 2026-09-10 15:17 UTC) between its launch and the end of the data (2026-09-18 15:17 UTC). Every token therefore has at least 8 days of observed trading.
+
+Sources:
+- Bonding-curve trade events (`trade_user`).
+- PumpSwap swaps (`trader`).
+- txmeta for fees paid per transaction.
+- System SOL transfers for funding links.
+
+## Wallet classes (assigned from non-outcome information only, before any P&L exists)
+
+Token-specific (a wallet can be an insider on token A and retail on token B):
+- **Creator:** the create event's `creator` or `tx_signer`.
+- **Creator-funded:** received a direct SOL transfer from the creator wallet between t_create − 72 h and t_create + 24 h.
+- **Launch-block:** first buy of the token in the creation slot or the next 2 slots.
+
+Global:
+- **Protocol trader:** `BwWK17cbHxwWBKZkUYvzxLcNQ1YVyaFezduWbtm2de6s`.
+- **Bot:** any PumpSwap swap flagged `is_atomic`, or more than 200 trades in any single clock hour.
+
+**Retail position:** a (wallet, token) position where the wallet is none of the above for that token and is not globally flagged. Primary results use retail positions only. Every class is reported separately, with a net-flow decomposition showing where retail SOL went.
+
+## Bet unit and X
+
+A **position** is one (wallet, token) pair.
+
+- **Cash in** = Σ over buys of SOL paid, including protocol and creator fees, plus the transaction costs of the wallet's own buy transactions (5,000 lamports base + priority fee + tip, from txmeta where the wallet is the first signer).
+  - Curve buy paid = sol_amount + fee + creator_fee.
+  - PumpSwap buy paid = the recorded total input.
+- **Cash out** = Σ over sells of SOL received net of fees, minus the transaction costs of those sells, plus the liquidation value of any tokens still held at the end of the data.
+  - Liquidation sells into the final curve or pool state with the registered Study 1 pricing (own impact included).
+  - If a liquidation would return less than one exit tx cost, it contributes 0.
+- **X** = cash out / cash in.
+- Positions that sell more tokens than they bought (tokens that arrived by transfer or airdrop) cannot be given a cost basis. They are excluded and counted.
+
+**Per trader:** ROI_w = Σ cash out / Σ cash in over the wallet's retail positions. "Ends ahead" means ROI_w > 1.
+
+## Casino comparators (exact laws of the games, not data)
+
+European roulette even money (RTP 0.973), American roulette even money (0.947), craps pass line (0.986), baccarat banker (0.989), Plinko 16 high (0.990), Sweet Bonanza (published 0.965).
+
+For per-trader comparisons, each retail wallet's actual sequence of stakes (its positions' cash in) is replayed as bets of the same sizes on game G. P(session ends ahead) is computed from the game's exact law by Monte Carlo, 200 draws per wallet, seed 20260924. Sweet Bonanza enters H2 only through its published survival points; it is replayed with its RTP-matched histogram (bins from 101rtp) and labelled approximate.
+
+## Hypotheses and ruling
+
+- **H1 (per SOL wagered).** Pooled retail RTP = Σ cash out / Σ cash in over retail positions. For each game G, H1_G holds if the upper 97.5% bound of the launch-day cluster bootstrap (10,000 resamples) is below RTP_G. Holm correction across the 6 games.
+- **H2 (per trader).** The share of retail wallets that end ahead is lower than the share of stake-matched gamblers ending ahead in game G. Wallet-cluster bootstrap, 1,000 resamples, Holm across games.
+- **H3 (shape, descriptive).** The six Study 1 statistics on retail positions: RTP, median, win rate, P(≥10/100/1,000), jackpot share, tail slopes.
+
+**Claim tiers**, reported exactly as they land:
+- (a) worse than European roulette: H1 and H2 both hold for European roulette;
+- (b) worse than a slot: H1 and H2 hold for Sweet Bonanza;
+- (c) worse than every game listed.
+
+If retail RTP is at or above a game's RTP, the paper reports that retail memecoin trading beat that game.
+
+## Robustness (registered)
+
+- Positions opened more than 1 h after launch.
+- Stake buckets: < 0.1, 0.1-1, 1-10, > 10 SOL.
+- Only days with ≥ 97% trade coverage against Dune (from `data/trade_coverage_daily.csv`).
+- Excluding positions with any liquidation value.
+- The bot rule tightened (> 50 trades in an hour) and loosened (> 1,000).
+- Creator-funded window of ±7 days.
+
+## Known limits (stated before results)
+
+- Wallets are not people: one person can run many wallets. Per-trader results are per-wallet.
+- Insider labels are a lower bound. Funding through intermediaries or through exchanges is not traced.
+- Coverage is ≥ 97% on 30 of 42 days, and degraded around 5-9 Sep. The robustness row covers this.
+- Trading outside pump.fun venues (Meteora, Raydium, Orca) is not included. Measured before freeze: those venues carry 1.5% of the census tokens' swaps and 1.5% of their SOL volume. The swap stream's `pumpfun` rows duplicate the curve trade stream, so positions use curve trades plus PumpSwap swaps only.
+
+## Amendment S2-1 (2026-09-23, before any P&L was computed)
+
+The v2 `other/transfer` files turned out to be **SPL token transfers of pump-style mints** (14 Aug - 8 Sep), not SOL transfers. So the registered "creator-funded" rule (a SOL transfer from the creator) cannot be implemented from the local data.
+
+Replacement:
+- **Creator-distributed:** a wallet that received the token itself from the creator's wallet between t_create − 72 h and t_create + 24 h. This is available for tokens created 14 Aug - 8 Sep only.
+- **Direction of the resulting bias:** any insider left in the retail class raises measured retail returns. The bias therefore runs against H1 and H2 (conservative for "gambling is better").
+
+Registered addition: on a random sample of 20,000 census tokens, SOL-funding links (creator → wallet within ±72 h, from Dune `tokens_solana.transfers` / system transfers) are pulled. The report states the share of retail positions and retail SOL volume that those links would reclassify, and reruns H1 on that sample with and without the reclassification.
+
+## Amendment S2-2 (2026-09-23, before any P&L was computed)
+
+PumpSwap swap signatures were dropped when the swap stream was slimmed, and txmeta covers pump.fun program transactions only. Transaction costs on PumpSwap legs therefore use the hourly median pump.fun cost (5,000 lamports + median priority fee + tip), as in Study 1. That is about 0.00005 SOL per side. Curve legs use the actual txmeta cost as registered, joined within aligned batch files. A trade whose transaction record falls in a neighbouring batch gets 0 tx cost, a negligible downward bias on retail costs, which again runs against the hypothesis.
+
+## Erratum S2-E1 (2026-10-12)
+
+The memecoin position build double-counted trades from overlapping upstream batch files: about 4.7% of curve trade rows and 1.4% of swaps. See Study 3 Erratum S3-E2 item 1 for the defect and the fix. Study 2 results are recomputed on the corrected positions; the earlier numbers are superseded and stay in the repo history.
+
+## Erratum S2-E2 (2026-10-13, after S2-E1 results were computed and seen)
+
+Amendment S2-2 sets the transaction cost of a PumpSwap leg to the hourly median pump.fun cost, as in Study 1. The analysis code used one median over the whole window instead. The second blind audit found this and judged the effect negligible (a leg costs about 0.00005 SOL). The code is corrected to the registered rule:
+
+- The hourly cost is 5,000 lamports plus the median of (priority fee + tip) over pump.fun transactions in that UTC hour. Transactions that appear in two overlapping batch files are counted once.
+- A PumpSwap buy or sell takes the cost of the hour of its block time.
+- An hour with no pump.fun transaction record takes the median of the hourly values. This is Study 1's fallback.
+- The exit cost of an end-of-data liquidation is the cost of the hour that contains the end of the data.
+- Curve legs are unchanged (actual cost per transaction).
+
+Study 2 results are recomputed. The S2-E1 numbers are superseded and stay in the repo history.
+
+## Erratum S2-E3 (2026-10-15, after S2-E2 results were computed and seen)
+
+A review of the position, class and valuation code against the raw data found the defects below. Each fix restores the registered design. The S2-E2 numbers are superseded and stay in the repo history.
+
+1. **PumpSwap times.** Swap rows carry the time the upstream feed delivered them, not the block time: a median of about 1.6 s late, and up to 5.7 h late for rows the feed delivered again. This moved some legs into the wrong hour for the transaction cost and the bot rule.
+   - **Fix:** each swap is timed by its slot. The slot's clock is the earliest time recorded for that slot or any later slot, across swap and curve records, so time cannot fall as the slot number rises. Where a slot also holds a curve trade, this is the curve's on-chain block time.
+2. **Duplicate swaps across file groups.** The S2-E1 fix removed duplicates inside groups of time-overlapping files, but some re-delivered swaps sit in different groups (about 0.006% of swaps).
+   - **Fix:** the swap key includes the slot, so swaps are deduplicated in windows of 100,000 slots read from every file that holds them.
+3. **End of the data.** Trades up to 35 s after the end of the data (2026-09-18 15:17 UTC) entered positions. They are now cut.
+4. **Curves not quoted in SOL.** The tokens of Study 1 Erratum 3 item 1 leave the population. Their positions had been booked with fee-only cash flows.
+5. **Graduation without a recorded event.** For the tokens of Study 1 Erratum 3 item 2, residual tokens are liquidated into the final state of their pool (from Dune, with the registered rules), not into the completed curve.
+6. **Creator and liquidation fee.**
+   - The creator is the creator and signer of the token's first create event; where a token had several create records, an arbitrary one was used.
+   - A curve liquidation pays the creator fee of the last fee-paying trade at or before the end of the data (the trade that sets the final state), not the token's maximum.
+7. **Tests.**
+   - H1_G holds when the Holm-adjusted one-sided bootstrap p is below 0.025, which is the registered 97.5% bound; the code used 0.05.
+   - The H2 wallet bootstrap now resamples each wallet's paired difference (whether the wallet ended ahead, minus its stake-matched gambler's probability of ending ahead) and uses the same bound. The code held the gamblers' share fixed.
+8. **Registered outputs that were missing.**
+   - The robustness row "creator-funded window of ±7 days" is computed on the creator-distributed rule that replaced it (Amendment S2-1): a window of t_create ± 7 days.
+   - The S2-1 check reruns H1 on the 20,000-token sample with and without the reclassification, with the launch-day bootstrap and the decision for each game.
+9. **Recorded, not changed:**
+   - The coverage robustness row measures curve-trade coverage only. The swap stream has its own outages (no swaps from 2026-09-04 21:48 to 09-05 16:12 UTC, and low counts on 09-03).
+   - The Sweet Bonanza law used in H2 is approximate. Its split of mass between the (0, 1) and [1, 10) bins is not published. H2 for Sweet Bonanza would change only if the [1, 10) mass were below about 0.10.

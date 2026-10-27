@@ -1,0 +1,16 @@
+{
+ "transfer_files": 52,
+ "transfer_rows": 2238062,
+ "positions_affected": 2346,
+ "liquidation_removed_sol": 82.14523482798616,
+ "pooled_rtp_primary": 0.7535957754659804,
+ "pooled_rtp_adjusted": 0.7535940032299258,
+ "share_wallets_ahead_primary": 0.14127997559509733,
+ "share_wallets_ahead_adjusted": 0.14127863105467095,
+ "upper_bound_gross": {
+  "positions_affected": 16241,
+  "liquidation_removed_sol": 67917.25740726058,
+  "pooled_rtp": 0.7521304998159883,
+  "share_wallets_ahead": 0.14121110524659095
+ }
+}

@@ -1,0 +1,121 @@
+{
+ "venue": "hl",
+ "positions": 5193148,
+ "wallets": 247545,
+ "halves_mid_utc": "2026-08-28 23:59:59.251500130+00:00",
+ "H1": {
+  "pooled_rtp": 0.9998986429252187,
+  "ci": [
+   0.9987723232790816,
+   1.0009148877673422
+  ],
+  "vs_games": {
+   "European roulette": {
+    "rtp": 0.972972972972973,
+    "p_holm": 1.0,
+    "holds": false
+   },
+   "American roulette": {
+    "rtp": 0.9473684210526315,
+    "p_holm": 1.0,
+    "holds": false
+   },
+   "Craps pass line": {
+    "rtp": 0.9858585858585859,
+    "p_holm": 1.0,
+    "holds": false
+   },
+   "Baccarat banker": {
+    "rtp": 0.9894209421575281,
+    "p_holm": 1.0,
+    "holds": false
+   },
+   "Plinko 16 high": {
+    "rtp": 0.989764404296875,
+    "p_holm": 1.0,
+    "holds": false
+   },
+   "Sweet Bonanza": {
+    "rtp": 0.965,
+    "p_holm": 1.0,
+    "holds": false
+   }
+  }
+ },
+ "H2_retail_share_ahead": 0.334884566442465,
+ "H2": {
+  "European roulette": {
+   "gamblers_ahead": 0.4719517259488173,
+   "diff_ci": [
+    -0.13897861247449964,
+    -0.13518573643175985
+   ],
+   "p_holm": 0.0,
+   "holds": true
+  },
+  "American roulette": {
+   "gamblers_ahead": 0.4461400957401684,
+   "diff_ci": [
+    -0.1131687612353309,
+    -0.10945002070330648
+   ],
+   "p_holm": 0.0,
+   "holds": true
+  },
+  "Craps pass line": {
+   "gamblers_ahead": 0.4852849582904118,
+   "diff_ci": [
+    -0.1520728640247228,
+    -0.14859344462622961
+   ],
+   "p_holm": 0.0,
+   "holds": true
+  },
+  "Baccarat banker": {
+   "gamblers_ahead": 0.4766143933426247,
+   "diff_ci": [
+    -0.1436278691753015,
+    -0.13989405663616716
+   ],
+   "p_holm": 0.0,
+   "holds": true
+  },
+  "Plinko 16 high": {
+   "gamblers_ahead": 0.27650067664465044,
+   "diff_ci": [
+    0.05655105940334082,
+    0.06038591266234424
+   ],
+   "p_holm": 1.0,
+   "holds": false
+  },
+  "Sweet Bonanza (approx. law)": {
+   "gamblers_ahead": 0.24430992344826194,
+   "diff_ci": [
+    0.08871645205922157,
+    0.09243131097376235
+   ],
+   "p_holm": 1.0,
+   "holds": false
+  }
+ },
+ "H4": {
+  "wallets_ge10": 85548,
+  "share_above_null95": 0.061357366624585026,
+  "ci": [
+   0.059790994529387013,
+   0.06295968345256464
+  ],
+  "skill_present": true
+ },
+ "H5": {
+  "wallets_both_halves": 37892,
+  "spearman": 0.16359453539764415,
+  "null_97.5": 0.010283695140601245,
+  "top_decile_half2_rtp": 1.0076506738166668,
+  "others_half2_rtp": 0.9995362015250546,
+  "top_decile_null_97.5": 1.0027698388222674,
+  "persistence_present": true,
+  "top_decile_persistence": true
+ }
+}

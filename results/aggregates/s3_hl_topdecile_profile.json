@@ -1,0 +1,49 @@
+{
+ "q90_roi1": 1.018090910358776,
+ "profile": [
+  {
+   "top": false,
+   "episodes": 2983909,
+   "wallets": 34102,
+   "med_peak_notional_usd": 164.912552,
+   "med_hold_s": 4440.531,
+   "share_hold_le60s": 0.086947356638557,
+   "avg_maker_share": 0.1114495646960356,
+   "liquidation_rate": 0.03347622196253304,
+   "avg_fills": 5.6132134056367,
+   "share_btc_eth": 0.3032806965627973,
+   "fees_per_notional": 0.0012628289811487865,
+   "funding_vs_abs_pnl": 0.003059459831412747,
+   "rtp": 0.9985725424279828,
+   "win_rate": 0.46558155761452513
+  },
+  {
+   "top": true,
+   "episodes": 194072,
+   "wallets": 3790,
+   "med_peak_notional_usd": 100.132398,
+   "med_hold_s": 86394.738,
+   "share_hold_le60s": 0.10461065996125149,
+   "avg_maker_share": 0.28891124048658795,
+   "liquidation_rate": 0.017271940310812483,
+   "avg_fills": 9.208644214518323,
+   "share_btc_eth": 0.1275660579578713,
+   "fees_per_notional": 0.0011442202401471856,
+   "funding_vs_abs_pnl": 0.014963883167162104,
+   "rtp": 1.0224960308766147,
+   "win_rate": 0.47023784987015127
+  }
+ ],
+ "per_wallet": [
+  {
+   "top": false,
+   "med_episodes": 46.0,
+   "med_coins": 9.0
+  },
+  {
+   "top": true,
+   "med_episodes": 29.0,
+   "med_coins": 11.0
+  }
+ ]
+}

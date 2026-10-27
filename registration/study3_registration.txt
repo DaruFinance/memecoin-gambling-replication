@@ -1,0 +1,246 @@
+# Study 3 registration: is retail speculation worse than gambling everywhere, and where does skill exist?
+
+Status: frozen before any Hyperliquid or Polymarket outcome is computed (sha256 in `FREEZE.txt`).
+
+**Disclosure.** Part of the Polymarket fill record was analysed earlier in a separate study (mid-2026). This study's Polymarket arm is therefore documented exposure, not a blind registration. No Hyperliquid wallet outcome has been seen.
+
+## Question
+
+1. Do retail traders in perpetual futures (Hyperliquid) and prediction markets (Polymarket) also get back less per unit at risk, and end ahead less often, than stake-matched gamblers? This is the same test as Study 2 for pump.fun.
+2. In which venues does **skill** exist, meaning returns that are more dispersed than luck allows and that persist out of sample? Casinos have none by construction.
+
+## Venues and windows
+
+| Venue | Data | Window |
+|---|---|---|
+| pump.fun memecoins | Study 2 positions (unchanged, frozen) | launches 2026-08-08 to 2026-09-10, trading to 2026-09-18 |
+| Hyperliquid perps | `hl-mainnet-node-data/node_fills_by_block` (every fill with wallet); funding from `hyperliquid-archive/asset_ctxs` | 2026-08-08 to 2026-09-18 (same calendar as Study 2) |
+| Polymarket | an earlier fill table (1.23B fills) and its market resolutions | the last 6 weeks of the dump: 2026-03-23 to 2026-05-04 |
+| Casinos | exact game laws (Study 1/2 table) | n/a |
+
+**Hyperliquid scope.** The primary is core perps: coins without a `:` deployer prefix. HIP-3 builder-deployed markets (`xyz:` etc.) and spot (`dir` Buy/Sell, outcome split/merge) are secondary or excluded.
+
+## Bet units (what "staked" means in each venue)
+
+- **Memecoins:** a Study 2 position. Stake = SOL paid including fees; X = cash out / cash in.
+- **Perps: episode.** For each (wallet, coin), an episode runs from flat to flat, reconstructed from `startPosition` and signed size.
+  - **Stake = peak |notional|** reached during the episode, the unlevered capital the same exposure would need. This makes a perp episode comparable to a spot bet.
+  - **PnL** = Σ `closedPnl` − Σ (`fee` + `builderFee`) − funding paid. Funding = Σ over hours of position notional × that hour's funding rate (sign as paid).
+  - **X = 1 + PnL / stake.**
+  - An episode open at the window end is marked to the last fill price of that coin.
+  - **Levered view (secondary):** an episode containing a `liquidation` fill is a total loss of its margin, reported as a liquidation-rate statistic.
+- **Polymarket: position** = (wallet, outcome token).
+  - Cash in = USDC spent buying.
+  - Cash out = USDC from sells + redemption value of tokens still held (1 or 0 by resolution).
+  - A position unresolved at the window end is marked to the last trade price.
+  - X = out / in.
+- **Per wallet (all venues):** ROI_w = Σ cash back / Σ stake. "Ahead" means ROI_w > 1.
+
+## Who counts as retail
+
+- **Memecoins:** as in Study 2.
+- **Hyperliquid:** excluded are
+  - HLP and vault addresses (from the public vault list);
+  - wallets with more than 200 fills in any clock hour;
+  - wallets with ≥ 80% maker (non-crossed) fills and ≥ 1,000 fills (market makers).
+- **Polymarket:** excluded are wallets with more than 200 fills in any clock hour, or ≥ 80% maker-role fills and ≥ 1,000 fills.
+
+The excluded classes are reported separately, with their net flows.
+
+## Hypotheses
+
+- **H1 (per venue):** pooled retail RTP < each casino game's RTP. Launch-day (memecoins) or calendar-day (perps, Polymarket) cluster bootstrap, 10,000 resamples, Holm across games.
+- **H2 (per venue):** share of retail wallets ahead < share of stake-matched gamblers ahead. Same replay as Study 2, 200 draws per wallet; wallet bootstrap; Holm.
+- **H4 (skill: excess dispersion, per venue):**
+  - **No-skill null:** every retail position's X is replaced by a random draw (without replacement) from the venue's pooled retail X within the same stake decile and calendar day. Wallet ROI is then recomputed. 200 permutations.
+  - **Statistic:** share of retail wallets with ≥ 10 positions whose observed ROI_w lies above the 95th percentile of their own null distribution.
+  - Skill is present if that share's 95% wallet-bootstrap interval lies above 5%.
+- **H5 (skill: persistence, per venue):**
+  - Split each window into two equal halves.
+  - Among retail wallets with ≥ 5 positions in each half, take the Spearman correlation of ROI_w in half 1 against half 2.
+  - Also report the half-2 pooled RTP of half 1's top decile versus everyone else.
+  - Null: the same statistics on the H4 permutation null.
+  - Persistence is present if the observed correlation exceeds the 97.5th percentile of the null.
+
+## How results are read
+
+- A venue "is worse than gambling" on the same tiers as Study 2 (European roulette, Sweet Bonanza, every game), separately for H1 and H2.
+- A venue "contains skill" if H4 or H5 holds.
+- The expected and allowed pattern "negative-sum for retail on average **and** skilled minority present" is reported as such. It does not contradict H1/H2.
+- Any venue whose retail RTP is at or above a game's RTP is reported as beating that game.
+
+## Budget and compute (registered)
+
+- Hyperliquid: stream 38.8 GB from `hl-mainnet-node-data` (ap-northeast-1) (Hyperliquid's public archive, requester pays).
+  - Hard stop at 52 GB downloaded.
+  - Raw data is never stored. Only compact fills (wallet, coin, time, px, sz, side, startPosition, dir, closedPnl, fees, crossed, liquidation) are written to E:.
+- Local compute is capped at 6 GB DuckDB memory per process, behind the RSS watcher.
+
+## Amendment S3-A1 (2026-10-10, before any Study 3 outcome computed in this project)
+
+**Polymarket uses an existing position table** (one row per wallet × market × outcome over 2026-02-04 to 2026-05-04, for wallets with ≥ $500 volume in that window).
+
+- **Positions:** those with `first_buy_ts` ≥ 2026-03-23 (the registered 6-week window). The study's day for each position = the day of its first buy.
+- **Value:**
+  - Resolved markets: held tokens are redeemed at their outcome prices.
+  - Unresolved markets: held tokens are marked at the last hourly close before 2026-05-04 from `market_hour_bars.parquet`.
+  - X = (sell_usd + held value) / buy_usd.
+- **Known biases, stated in advance, both against H1/H2:**
+  - Wallets under $500 volume are absent.
+  - The fills-only ledger omits mint/merge/redeem legs. An earlier audit measured +2-4% of volume upward bias in P&L.
+- **Bot / market-maker rule:** hourly fill counts are not in the table, so the rule becomes: exclude wallets with ≥ 1,000 fills and ≥ 80% maker fills (market makers), or with more than 5,000 fills in the window (bots). Positions where both outcomes are held in the same market (likely minted pairs) are reported as a sensitivity.
+
+**Hyperliquid specifics:**
+- Episodes are reconstructed per (wallet, coin) from `start` + signed `sz`.
+- Funding comes from `hyperliquid-archive/asset_ctxs` hourly rates.
+- The vault list comes from the public Hyperliquid info API (`vaultSummaries`).
+
+**Listed-memecoin arm (secondary; design as registered in Study 1, "Listed memecoins").**
+- **Population:** CoinGecko meme-category coins (active, 7,363) plus inactive coins with pump.fun-style Solana addresses (973). Dead coins are included through their contract addresses.
+- **Bets:** K = 5 per coin.
+  - Entry is uniform over [first pool's creation, 2026-10-02].
+  - Hold is log-uniform over [1 min, 7 d].
+- **Pricing:**
+  - Price = close of the last traded minute at or before t, from the token's top pool (GeckoTerminal pool OHLCV via the CoinGecko API).
+  - Coins with no on-chain address (e.g. DOGE) use CoinGecko aggregated prices: the hourly point at or before t.
+  - Costs: 30 bp per side (sensitivity 10 / 100 bp).
+- **Dead-pool sensitivity:** X = 0 when the exit price is more than 7 days stale.
+- **Statistics:** Study 1's six statistics plus the four-condition ruling, so the listed arm is directly comparable with the launch tier.
+
+## Amendment S3-A2 (2026-10-10, before any Study 3 outcome computed)
+
+A complete on-chain record for the window was obtained, so all three venues now use the same calendar window and the same data layers.
+
+**Polymarket primary:**
+- **Window:** 2026-08-08 to 2026-09-18, the same as pump.fun and Hyperliquid.
+- **Fills:** on-chain fills for every wallet, from an existing on-chain fill feed.
+- **Side legs:** mint, merge, split and redeem events from the Conditional Tokens contract events for the same window, so cost basis and payouts are complete. This removes the fills-only bias noted in S3-A1.
+- **Resolutions:** market metadata and resolutions from Polymarket's public market data.
+- **Positions and rules:**
+  - Position = (wallet, outcome token).
+  - Cash in = USDC paid for buys + USDC used to mint (split).
+  - Cash out = USDC from sells + USDC from merges and redemptions inside the window + the value of tokens held at window end (resolved: payout value; unresolved: last trade price before 2026-09-18 15:17 UTC).
+- **Retail filter:** the registered hourly rule (> 200 fills in any clock hour) and the maker rule (≥ 80% maker, ≥ 1,000 fills), now computable from fill timestamps.
+
+**Demoted:** the S3-A1 table (Feb-May 2026, ≥ $500 wallets, fills-only) becomes a replication footnote, as the July pump.fun slice is.
+
+**Not used, to keep the arms even:** order books, Kalshi, and earlier years. They have no counterpart in the other venues.
+
+## Amendment S3-A3 (2026-10-11, before any Polymarket outcome statistic was computed)
+
+Validation of the Polymarket inputs (`code/s3_validate.py` and further checks) found two gaps.
+
+1. **The fill feed has no negative-risk trades.** The feed contains no fills in negative-risk (multi-outcome) markets: 0 fills across 732,294 negative-risk tokens. API spot checks: 58 of 235 trades in 8 random wallets were missing, and every classifiable missing trade was negative-risk.
+2. **The token map is incomplete.** The 2026-09-19 market snapshot maps only 20,697 of 827,745 traded tokens; weekly snapshots hold only markets updated that week.
+
+Remedies:
+- **Token map and resolutions:** built from every weekly snapshot 2026-07-02 to 2026-09-19 (later snapshots only if tokens remain unmapped). The latest record per market with `updated_at` at or before the window end is used for resolution state. A token in a market not closed by the window end is valued at its last trade price.
+- **Negative-risk fills:** taken from Polymarket's public orderbook subgraph (Goldsky), only if a one-day test shows that it includes negative-risk exchange fills and reproduces the public trade API for sampled wallets.
+- **Fallback, if the test fails:** the Polymarket arm is restricted to standard (non-negative-risk) markets, and this is stated as a scope limit.
+
+## Amendment S3-A4 (2026-10-11, before any Polymarket outcome statistic was computed)
+
+The Goldsky subgraph named in S3-A3 is deprecated, following Polymarket's migration to V2 exchange contracts. Polymarket fills are therefore backfilled from the Polygon chain itself via an Alchemy RPC endpoint.
+
+**Contracts in the window** (blocks 91,628,115 to 94,047,311), identified from ERC-1155 transfer operators on the Conditional Tokens contract:
+- V2 exchange `0xe111180000d2663c0091e4f400237545b87b996b`: the one the existing fill feed captures.
+- V2 exchange `0xe2222d279d744050d28e00520010520000310f59`: identical bytecode, absent from that feed, presumed negative-risk.
+- Negative-risk adapter `0xd91e80cf2e7be2e162c6513ced06f1dd0da35296`.
+- The V1 exchanges are near idle.
+
+**Method:**
+1. Decode the V2 fill event against the feed's own decoded rows for the same transactions.
+2. **Gate:** a one-day pull of `0xe111…` must reproduce the feed rows exactly (same tx, address, side, USD and token amounts).
+3. Then pull `0xe222…` and the adapter for the full window.
+4. Polymarket fills = feed (`0xe111…`) + chain-decoded `0xe222…`.
+
+**Completeness check:** the share of Polymarket data-API trades (sampled wallets) absent from the combined fills must fall to under 2%. Otherwise the arm is restricted to the covered contracts, and that is stated.
+
+## Amendment S3-A5 (2026-10-11, before any Polymarket outcome statistic was computed)
+
+The Alchemy backfill registered in S3-A4 was completed as a validated dataset. The Polymarket arm now uses it. No Polymarket outcome statistic has been computed on any source.
+
+**Fills source:** the completed on-chain fill dataset, 2026-08-08 to 2026-09-18 UTC. Timestamps are block times. It carries every V2 and legacy exchange plus `fee` and `exchange` columns. The S3-A4 gate and completeness bar were met on this dataset:
+- `0xe111…` rows equal the earlier feed row for row (2026-09-01 01:00 UTC hour, 124,840/124,840);
+- `0xe222…` rows equal our own decode of the same hour (36,771/36,771);
+- 175,937 raw OrderFilled logs in 12 random windows show 0 missing and 0 extra;
+- data-API trades missing from the fills: 0 of 204 in 21 sampled wallets, excluding combos (below).
+
+**Fees** are now included:
+- pUSD exchanges (`0xe111…`, `0xe222…`): a buy costs `usd_amount + fee`, and a sell returns `usd_amount − fee`.
+- Legacy exchanges: the fee is paid in the asset received. A buy receives `token_amount − fee` tokens; a sell receives `usd_amount − fee` USDC.
+
+**Combo exchange excluded.** `0xe3333700ca9d93003f00f0f71f8515005f6c00aa` (parlay/combo tokens, live since 2026-05-26) was found after S3-A4. A combo token pays only if every leg resolves its way. It is a different instrument from a single market and has no single-market resolution.
+- Combo fills are excluded from the primary.
+- Their share of window USD volume and of wallets is reported.
+- Wallets that trade combos keep their single-market positions.
+
+**Side legs:**
+- **CTF events** as in S3-A2: user-level splits and merges, where the stakeholder also appears as a fill address.
+- **Neg-risk user flows** from `negrisk_adapter_events` (NegRiskAdapter `0xd91e…` and CollateralAdapter `0xada2005600…`), under the same user rule.
+  - NegRiskAdapter rows whose stakeholder is `0xada2005600…` duplicate the CollateralAdapter's own row and are dropped.
+  - A split or merge of `amount` on a question counts as `amount` USDC, allocated `amount / 2` to each of the question's two outcome tokens. This is S3-A2's rule with n_out = 2.
+- **Conversions** (`PositionsConverted`): the user gives `amount` NO tokens on each of k questions and receives `amount` YES tokens on each of the other questions plus (k − 1) × `amount` USDC, net of the conversion fee.
+  - The USDC is cash out, split equally across the k NO positions, and those NO tokens leave the positions.
+  - The YES tokens received enter with zero cash in.
+  - Sensitivity: positions touched by a conversion are dropped.
+- **Redemptions are not added separately.** A token held at window end in a market resolved by then is valued at its payout. That equals the redemption amount, so adding redemptions would double-count them.
+
+**Resolutions and token map:** a cumulative market metadata table, current rows of the 2026-10-03 build. It is cumulative, and its truncated weekly snapshots are handled by carry-forward.
+- A token is resolved if `resolved_at` ≤ 2026-09-18 15:17 UTC. Its payout is `resolution_price`. The resolution time is the market's actual close time, so using a later build adds no lookahead.
+- Otherwise the token is valued at its last fill price at or before that time.
+- Tokens absent from the master (unlisted markets, about 0.005% of volume) are valued the same way.
+
+**Unchanged:** positions, retail filters, window and H1-H5 are as registered.
+
+## Erratum S3-E1 (2026-10-11, after first results were computed and seen)
+
+A blind code audit found the defects below in the first Study 3 run (commit 3300d2a). The first-run numbers are superseded. They are kept in the repo history and reported as such. Each fix restores the registered definition and does not change it.
+
+1. **Calendar day (all venues).** `s3_analyze.py` computed the day index as `((t − w0) // 86400)::int`. In DuckDB, `//` on a DOUBLE is true division, and the integer cast rounds, so days ran noon to noon. Fixed to `floor((t − w0) / 86400)`, which gives UTC calendar days as registered. This affects the H1 day clusters and the H4/H5 strata.
+2. **Halves (all venues).** The midpoint is now the midpoint of each venue's own window, from 2026-08-08 00:00 UTC to the venue's last event used. The first run used a fixed 2026-09-19 end.
+3. **H5 null.** The null distribution now covers both registered statistics: the Spearman correlation and the top-decile half-2 RTP. Row order within a wallet is made deterministic.
+4. **Polymarket, NULL payouts.**
+   - 4,579 tokens are marked resolved with no resolution price, most likely void or 50/50 resolutions. They are now valued at last fill price, the registered fallback.
+   - Positions with no tokens left at window end no longer get a NULL end value. In the first run, 58,363 such positions were dropped.
+5. **Polymarket, conversions.** The YES tokens a conversion yields entered positions with zero cash in, and the analysis then dropped those positions (cash in must be > 0). Their value ($2.7M) was lost. Now the window-end value of the YES tokens is credited, together with the conversion's USDC, as cash out of the k converted NO positions, split equally.
+   - Seven conversions whose index sets exceed 128 bits, and 17 whose market is absent from the market metadata table, are left out.
+   - YES tokens of questions absent from the market metadata table are not credited (13.3M token units, mostly placeholders).
+6. **Polymarket, binary-market collateral adapter.** `0xada100db00ca00073811820692005400218fce1f` routes user splits, merges and redemptions in standard markets. These appear in ctf_events with the adapter, not the user, as stakeholder. In the window: splits $279M, merges $423M. The adapter's own events, which name the user, are being added. Once they are available, those user splits and merges enter as side legs under the S3-A5 rule (amount / 2 per token).
+   - Until then the Polymarket arm is reported as provisional.
+
+**Checked by the audit and refuted:** 17 v2 block ranges with no files inside the window. They are confirmed zero-fill windows of Polymarket's order book: raw `eth_getLogs` over each full range returns no Polymarket OrderFilled.
+
+**S3-E1 item 5, corrected before any computation under S3-E1.** Crediting window-end YES value to the NO positions breaks token accounting when a user later trades the converted YES tokens. Conversions are therefore booked as an exchange at market:
+- each YES token received enters its position with cash in = `amount` × its last fill price at or before the conversion (0 if it never traded);
+- the k converted NO positions receive, split equally, cash out = (k − 1) × `amount` USDC + the total market value of those YES tokens.
+
+Tokens and value are both conserved.
+
+## Erratum S3-E2 (2026-10-12, after S3-E1 results were computed and seen)
+
+A second blind code audit covered `s2_positions.py`, `hl_episodes.py`, the listed-arm code and `s3_secondary.py`. The defects below are corrected. Each fix restores the registered definition. The S3-E1 numbers for the affected arms are superseded and stay in the repo history.
+
+1. **Memecoin positions (also Study 2).** Duplicate removal on `payload_hash` ran inside each trade file, but two pairs of upstream batch files overlap (2026-08-08 21:15 to 08-10, and 08-31 19:57 onward). About 4.7% of curve trade rows and 1.4% of PumpSwap swaps were counted twice. This produced phantom residual tokens, wrong `oversold` flags and doubled hourly activity counts.
+   - **Fix:** trade files and swap files with overlapping time ranges are merged into groups and deduplicated across each group. Curve trades are keyed on `payload_hash`; swaps on (slot, tx index, trader, mints, amounts). Activity counts are taken from the deduplicated rows.
+   - The 50-fills/hour sensitivity is computed on hourly counts after merging all parts.
+2. **Hyperliquid liquidation flag.** It marked every fill that carried a liquidation record, which includes the counterparty and auto-deleveraged positions.
+   - **Fix:** an episode counts as liquidated only if it contains a crossed (taker-side) liquidation fill that is not an `Auto-Deleveraging` fill.
+3. **Hyperliquid scope.** Coins with a `#` prefix (outcome contracts) are not core perps and are now excluded, as `:`, `@` and `/` coins already were.
+4. **Listed-memecoin arm.**
+   - Prices are re-fetched so the candle opens at or before t; the old request returned candles up to 60 s after t.
+   - The token side is set explicitly, so a coin quoted as the pool's quote token is priced correctly.
+   - Failed price requests are retried and logged. Unpriced bets are reported by cause, not dropped silently.
+5. **Documented, not changed:**
+   - Hyperliquid funding is missing for 95 of 1,008 window hours (funding there is zero; total funding is 0.38 bp of stake).
+   - Memecoin tokens moved to another wallet are still valued as held. A sensitivity using the transfer data available (2026-08-14 to 09-08) is reported.
+
+## Erratum S3-E3 (2026-10-13, after S3-E2 results were computed and seen)
+
+The memecoin arm uses the Study 2 positions. Study 2 Erratum S2-E2 corrects the transaction cost of PumpSwap legs from one window-wide median to the registered hourly median. The memecoin arm, its bot-rule sensitivity, the excluded-class table, the transfer sensitivity and the exploratory memecoin cuts are recomputed on the corrected positions. Hyperliquid, Polymarket and the listed arm are not affected. The S3-E2 memecoin numbers are superseded and stay in the repo history.
+
+## Erratum S3-E4 (2026-10-15, after S3-E3 results were computed and seen)
+
+The memecoin arm uses the Study 2 positions, which Study 2 Erratum S2-E3 corrects (swap times, duplicates across files, the end-of-data cut, tokens not quoted in SOL, graduation without a recorded event, creator and liquidation fee). The memecoin arm and its secondaries are recomputed.
+
+On every venue, H1 and H2 now hold at the 97.5% bound, as in Study 2, and the H2 wallet bootstrap resamples each wallet's paired difference with its stake-matched gambler (S2-E3 item 7). The Hyperliquid and Polymarket arms and their sensitivities are rerun. Their positions, pooled RTPs, H4 and H5 are unchanged, because the bootstrap draws the same random numbers. The S3-E3 numbers are superseded and stay in the repo history.

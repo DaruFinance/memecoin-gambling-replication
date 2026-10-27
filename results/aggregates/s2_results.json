@@ -1,0 +1,275 @@
+{
+ "tx_cost_end_hour_lamports": 59544.0,
+ "tx_cost_hourly_fallback_lamports": 55000.0,
+ "counts": {
+  "positions": 57691472.0,
+  "oversold": 5003443.0,
+  "creator": 959116.0,
+  "launch_block": 3174838.0,
+  "distributed": 54.0,
+  "protocol": 204618.0,
+  "atomic_bot": 687653.0,
+  "hour_bot": 6326775.0,
+  "retail": 44114785.0,
+  "retail_wallets": 6693737.0
+ },
+ "net_flow_by_class_SOL": [
+  {
+   "cls": "retail",
+   "positions": 44114785,
+   "wallets": 6693737,
+   "sol_in": 46351181.368349925,
+   "sol_out": 34930054.46704527,
+   "net_sol": -11421126.901304657,
+   "rtp": 0.7535957754659655
+  },
+  {
+   "cls": "bot",
+   "positions": 5865920,
+   "wallets": 29983,
+   "sol_in": 17764031.11668747,
+   "sol_out": 14831311.27701358,
+   "net_sol": -2932719.839673888,
+   "rtp": 0.8349068507925039
+  },
+  {
+   "cls": "creator-distributed",
+   "positions": 52,
+   "wallets": 51,
+   "sol_in": 221.310060208,
+   "sol_out": 382.461730261615,
+   "net_sol": 161.151670053615,
+   "rtp": 1.7281714618041102
+  },
+  {
+   "cls": "protocol",
+   "positions": 204618,
+   "wallets": 1,
+   "sol_in": 781817.0527323195,
+   "sol_out": 952630.7950641917,
+   "net_sol": 170813.7423318721,
+   "rtp": 1.2184830092090044
+  },
+  {
+   "cls": "launch-block",
+   "positions": 2176905,
+   "wallets": 148037,
+   "sol_in": 2867879.7602545614,
+   "sol_out": 4320467.929854342,
+   "net_sol": 1452588.1695997806,
+   "rtp": 1.5065024655952957
+  },
+  {
+   "cls": "creator",
+   "positions": 959116,
+   "wallets": 187914,
+   "sol_in": 2717209.64294763,
+   "sol_out": 4239022.660539788,
+   "net_sol": 1521813.017592158,
+   "rtp": 1.5600646315759776
+  },
+  {
+   "cls": "oversold (no cost basis)",
+   "positions": 4370076,
+   "wallets": 622039,
+   "sol_in": 3968665.396302526,
+   "sol_out": 8312914.173924328,
+   "net_sol": 4344248.777621802,
+   "rtp": 2.094637200120019
+  }
+ ],
+ "H3_retail_position_shape": {
+  "n": 44114785,
+  "rtp": 0.6617283295437612,
+  "median": 0.6794287432736278,
+  "win_rate": 0.23946985120748066,
+  "p_ge_10": 0.0003970097553461952,
+  "p_ge_100": 8.659228419678345e-06,
+  "p_ge_1000": 2.946857839157552e-07,
+  "jackpot_share": 0.0036173619178382966,
+  "slope_10_100": 1.6613219824599492,
+  "slope_100_500": 1.6940975247779346,
+  "slope_500_1000": 0.9434164716336308,
+  "hill_above_10": 2.0309825948975466,
+  "surv": {
+   "2": 0.021364152630461646,
+   "3": 0.007148669091326184,
+   "5": 0.0020645459339765568,
+   "10": 0.0003970097553461952,
+   "20": 8.89497704681095e-05,
+   "50": 1.99479607573742e-05,
+   "100": 8.659228419678345e-06,
+   "200": 3.966924014250551e-06,
+   "500": 5.667034306072216e-07,
+   "1000": 2.946857839157552e-07
+  }
+ },
+ "H1_pooled_retail_rtp": 0.7535957754799681,
+ "H1_ci_day": [
+  0.7240498248744902,
+  0.7773452784502907
+ ],
+ "H1": {
+  "European roulette even money": {
+   "game_rtp": 0.972972972972973,
+   "p_boot": 0.0,
+   "p_holm": 0.0,
+   "holds": true
+  },
+  "American roulette even money": {
+   "game_rtp": 0.9473684210526315,
+   "p_boot": 0.0,
+   "p_holm": 0.0,
+   "holds": true
+  },
+  "Craps pass line": {
+   "game_rtp": 0.9858585858585859,
+   "p_boot": 0.0,
+   "p_holm": 0.0,
+   "holds": true
+  },
+  "Baccarat banker": {
+   "game_rtp": 0.9894209421575281,
+   "p_boot": 0.0,
+   "p_holm": 0.0,
+   "holds": true
+  },
+  "Plinko 16 high": {
+   "game_rtp": 0.989764404296875,
+   "p_boot": 0.0,
+   "p_holm": 0.0,
+   "holds": true
+  },
+  "Sweet Bonanza (published)": {
+   "game_rtp": 0.965,
+   "p_boot": 0.0,
+   "p_holm": 0.0,
+   "holds": true
+  }
+ },
+ "retail_wallets": 6693737,
+ "share_wallets_ahead": 0.14127997559509733,
+ "wallet_positions_quantiles": [
+  1.0,
+  9.0,
+  103.0
+ ],
+ "sweet_bonanza_approx_law": {
+  "0.0": 0.57063,
+  "0.4": 0.254782995,
+  "3.2306693117054732": 0.164859585,
+  "14.0": 0.007445,
+  "40.0": 0.00153,
+  "200.0": 0.000727,
+  "700.0": 2.31e-05,
+  "1500.0": 2.32e-06
+ },
+ "H2": {
+  "European roulette even money": {
+   "share_gamblers_ahead": 0.48284797845153504,
+   "diff_ci": [
+    -0.3418193143950583,
+    -0.3412716575232047
+   ],
+   "p_holm": 0.0,
+   "holds": true
+  },
+  "American roulette even money": {
+   "share_gamblers_ahead": 0.4668417576907939,
+   "diff_ci": [
+    -0.3258062451502172,
+    -0.3252677223262246
+   ],
+   "p_holm": 0.0,
+   "holds": true
+  },
+  "Craps pass line": {
+   "share_gamblers_ahead": 0.49096650303012496,
+   "diff_ci": [
+    -0.34993501362388446,
+    -0.34939709096374905
+   ],
+   "p_holm": 0.0,
+   "holds": true
+  },
+  "Baccarat banker": {
+   "share_gamblers_ahead": 0.4656624105519987,
+   "diff_ci": [
+    -0.3246373993964823,
+    -0.3240929908965408
+   ],
+   "p_holm": 0.0,
+   "holds": true
+  },
+  "Plinko 16 high": {
+   "share_gamblers_ahead": 0.22996909644932223,
+   "diff_ci": [
+    -0.08894854981555847,
+    -0.08840358110193457
+   ],
+   "p_holm": 0.0,
+   "holds": true
+  },
+  "Sweet Bonanza (approx. law)": {
+   "share_gamblers_ahead": 0.19669524073930755,
+   "diff_ci": [
+    -0.05566749775732862,
+    -0.055125234836014926
+   ],
+   "p_holm": 0.0,
+   "holds": true
+  }
+ },
+ "H2_retail_share_ahead": 0.14127997559509733,
+ "S2_1_funding_sample_check": {
+  "rtp_as_registered": 0.7364526088176034,
+  "rtp_funded_removed": 0.7362039114860941,
+  "share_positions_reclassified": 0.003328793136996525,
+  "share_sol_reclassified": 0.0050450767031365255,
+  "H1_as_registered": {
+   "ci": [
+    0.6838874277015953,
+    0.7811714061543211
+   ],
+   "holds": {
+    "European roulette even money": true,
+    "American roulette even money": true,
+    "Craps pass line": true,
+    "Baccarat banker": true,
+    "Plinko 16 high": true,
+    "Sweet Bonanza (published)": true
+   }
+  },
+  "H1_funded_removed": {
+   "ci": [
+    0.6832772767483704,
+    0.7812082030398182
+   ],
+   "holds": {
+    "European roulette even money": true,
+    "American roulette even money": true,
+    "Craps pass line": true,
+    "Baccarat banker": true,
+    "Plinko 16 high": true,
+    "Sweet Bonanza (published)": true
+   }
+  }
+ },
+ "robustness_pooled_rtp": {
+  "opened >1h after launch": 0.8140086344236652,
+  "stake 0-0.1 SOL": 0.7167026923008174,
+  "stake 0.1-1 SOL": 0.8546322164143183,
+  "stake 1-10 SOL": 0.881370102473351,
+  "stake 10-1000000000.0 SOL": 0.5745180353146174,
+  "launch day coverage >= 97%": 0.7703242017255012,
+  "no liquidation value": 0.905960012558309,
+  "bot rule > 50/hour": 0.6859436098562054,
+  "bot rule > 1000/hour": 0.754380199168525,
+  "creator-distributed window +-7 days": 0.7535957754659655
+ },
+ "claim_tiers": {
+  "a_worse_than_european_roulette": true,
+  "b_worse_than_slot": true,
+  "c_worse_than_every_game": true
+ }
+}

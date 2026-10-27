@@ -1,0 +1,150 @@
+# Registration: is a random memecoin bet a slot machine?
+
+Frozen before any outcome statistic exists. The freeze record (sha256 of this file, the sampler, the pricing code and the sampled bet table) is written to `FREEZE.txt`. `REGISTRATION_DRAFT.md` holds the working history and audit notes that led here.
+
+## Question
+
+Does a random bet on a memecoin have the payoff shape of a casino slot (a low win rate, a median well below the stake, most of the return paid by rare large multiples) rather than the shape of a table game or of trading a major coin?
+
+## Unit and statistics
+
+One bet = 1 unit staked. X = value returned after all costs / stake.
+
+For the crypto arms, X is measured in the stake's own unit: SOL for pump.fun, USDT for BTC/ETH. So the SOL/USD move over the hold is not part of X. The $100 stake only sets the bet's size (S = 100 / SOLUSD at entry).
+
+Every arm reports:
+
+1. RTP = E[X]
+2. Median X
+3. Win rate = P(X > 1)
+4. P(X ≥ 10), P(X ≥ 100), P(X ≥ 1,000)
+5. Jackpot share = E[X · 1{X ≥ 100}] / E[X]
+6. Tail slope: the log-log slope of P(X ≥ m) over 10-100, 100-500 and 500-1,000, plus a Hill estimate above 10×
+
+## Arms
+
+| Arm | Definition | Data |
+|---|---|---|
+| Casino | EU/US roulette (even money, dozen, straight up), craps pass line, baccarat 8-deck (banker, player, tie), Plinko 16 rows high risk, crash at 99% RTP (cash-out at 2/10/100/1,000×), Sweet Bonanza (survival points) | Exact from the rules (`code/casino_games.py`); Rainbet multipliers; 101rtp.net (34,968,204 demo spins, measured RTP 96.40%) |
+| Launch tier (primary) | pump.fun launches, below | Slinky21/Pumpfun_v2_dataset + Dune PumpSwap events |
+| Control | BTC and ETH spot, random entry and exit over the launch tier's calendar window, 10 bp taker per side, same hold distribution, one control bet per launch-tier bet | Binance spot 1m klines (data.binance.vision) |
+| Listed memecoins (secondary) | A random coin from CoinGecko's meme categories, including inactive coins; entry uniform over its history with at least 8 days of data after it; same hold distribution; 30 bp per side (sensitivity 10 / 100 bp) | CoinGecko Analyst API (key pending; this arm runs after the key arrives, under these definitions) |
+| Replication | pump.fun launches 2026-07-04 to 2026-07-14, the same design with hold capped at 24 h (the corpus tracks 48 h). Graduation-phase prices come from the corpus's DEX snapshots (lower fidelity, labelled as such) | Slinky21/Pumpfun_Memecoin_Corpus |
+
+## Launch-tier sample (`code/sample_bets.py`, seed 20260923)
+
+- **Census:** every distinct mint in the v2 create events, deduplicated on `payload_hash`, created from the start of the data (2026-08-08 21:16 UTC) to the end of the data minus 8 days (2026-09-10 15:17 UTC). Mayhem-mode tokens are included and reported as a secondary split.
+- **Bets:** K = 5 per token.
+- **Entry:** t_entry = t_create + U[60 s, 24 h).
+- **Hold:** h = exp(U[ln 60 s, ln 7 d]). t_exit = t_entry + h.
+- **Phase:** a time is in the pool phase if it is at or after the token's graduation event; otherwise it is in the curve phase.
+- **Gap exclusion:**
+  - A curve-phase entry or exit is excluded if a trade-stream gap lies between t and the trade used to price it.
+  - Pool-phase pricing uses Dune, which has no collection gaps.
+  - Trade-stream gap hours (UTC-3): 2026-09-05 01:00 to 12:00, 2026-09-06 02:00, 2026-09-06 09:00 to 10:00.
+
+## Pricing
+
+**Curve phase.** Pricing uses the virtual reserves (vS, vT).
+- **State at t:** the pre-trade state of the first trade at or after t. That is its recorded post-trade reserves minus its own amounts (buy: vS − sol, vT + tok; sell: vS + sol, vT − tok).
+  - If there is no curve trade after t, use the post-trade state of the last trade before t, or the create-event reserves if the token never traded.
+- **Fee:** f = (95 + creator_fee_bps) / 10⁴, with creator_fee_bps from the same trade event.
+- **Buy with S SOL:** sol_in = S / (1 + f); tokens = vT − vS·vT / (vS + sol_in), capped at the real tokens remaining on the curve. If capped, the unspent SOL is returned.
+- **Sell of q tokens:** gross = vS − vS·vT / (vT + q); net = gross · (1 − f).
+- **Validated** on 1.83M trades: constant-product median deviation 3e-11; fee exactly 95 bp (+30 bp creator where set).
+
+**Pool phase.** Pricing uses PumpSwap reserves (rb, rq) from Dune `pumpdotfun_solana.pump_amm_evt_buyevent` / `_sellevent`.
+- **State at t:** the pre-trade reserves of the first pool event at or after t.
+  - If there is none, take the last event before t and apply its amounts. Buy: rb − base_out, rq + quote_in + lp_fee. Sell: rb + base_in, rq − (quote_out − lp_fee).
+- **Fee:** f = (lp + protocol + creator bps) of that event; 125 bp at low market cap, 30 bp above.
+- **Buy:** q_in = S / (1 + f); base = rb − rb·rq / (rq + q_in).
+- **Sell:** gross = rq − rb·rq / (rb + q); net = gross · (1 − f).
+- **Gate before any outcome query:** Dune-derived reserves plus this formula must reproduce the HF swap stream's (net) outputs within 1 bp on a validation sample of at least 1,000 swaps across at least 50 pools.
+
+**Across graduation.** A bet that enters on the curve and exits after graduation carries its tokens into the pool. Migration preserves the token balance.
+
+**Transaction costs, per side:** 5,000 lamports base fee + the median (priority_fee + tip_amount) of pump.fun transactions in that UTC hour (txmeta). Token-account rent is assumed refunded on close.
+
+**X** = (net SOL from the exit − exit tx cost) / (S + entry tx cost).
+
+## Readouts
+
+- **Primary:** the full random-hold distribution.
+- **Fixed horizons:** 5 min, 1 h, 24 h, 7 d, re-priced at t_entry + horizon.
+- **Peak multiple:** max over t in (t_entry, t_exit] of the net sell value, labelled perfect hindsight. It is reported beside the primary result and never in it.
+- **Splits:** mayhem vs normal; launch week; stake $10 / $100 / $1,000 (secondary).
+
+## Inference
+
+- Primary interval: bootstrap over launch-day clusters, 10,000 resamples.
+- Secondary: token-cluster bootstrap.
+- RTP is reported with and without the top 0.01% of bets.
+
+## Ruling (pre-registered, launch tier, $100, random hold)
+
+"A random memecoin bet is a slot" passes only if all four hold:
+
+1. Median X < 1.
+2. Win rate < 48.65% (European roulette even money).
+3. Jackpot share ≥ 9%.
+4. Survival-curve distance, computed on the grid m ∈ {2, 3, 5, 10, 20, 50, 100, 200, 500, 1000}. Distance = mean |log10 max(P_arm(X≥m), 1e-7) − log10 max(P_ref(X≥m), 1e-7)| over the grid points where the reference is defined.
+   - Slot distance = the minimum over {Plinko high, Sweet Bonanza (points 10/100/500/1,000)}.
+   - Table distance = the minimum over {BTC control, European roulette even money}.
+   - Condition 4 holds if slot distance < table distance.
+
+Any other result is published as it lands. Two outcomes are allowed in advance:
+- RTP above 1.
+- A tail fatter than every casino game here, reported as "slot-shaped with no cap".
+
+## Amendment 1 (2026-09-23, approved before any outcome statistic was computed)
+
+The pool-pricing gate as first registered (end-to-end reproduction within 1 bp) failed at 68.3% within 1 bp and 82.2% within 10 bp, on 1,468 swaps across 60 pools. The misses come from fee-recording conventions, not from reserves. Full diagnosis: `REGISTRATION_DRAFT.md`, "Pool-pricing gate".
+
+Replacement rules:
+
+- **Reserves.** Pool-phase pricing uses (rb, rq + V_pool). V_pool is the virtual quote reserve: the median, over the pool's sell events, of V = quote_out_gross · (rb + q)/q − rq. Measured: 17.5845 SOL on almost every pool, 0 on a few, 18-23 SOL on a handful.
+- **Gate (replaces the 1 bp end-to-end gate).** With each sell's own realized fee, gross outputs must match within 1 bp on ≥ 90% of sells. Result: 93.3% (median 0.0001 bp). **PASSED.**
+- **Fees.** f = the realized fee of the nearest same-side event on that pool: at or after t, else before.
+  - Sell: f = 1 − user_quote_amount_out / quote_amount_out.
+  - Buy: f = quote_amount_in / user_quote_amount_in − 1.
+- **Buy convention.** Fees on top: Q = S / (1 + f).
+- **Registered sensitivity.** Pool-phase buys run with Q = S; all pool-phase fees are shifted ±5 bp. Maximum effect: about 1.25% on post-graduation legs only.
+
+### Erratum to Amendment 1 (2026-09-23, before any outcome computed)
+
+Field semantics were confirmed on consecutive pool events, with 100% exact reserve accounting:
+- Buy events: `quote_amount_in` is the net amount entering the swap maths; `user_quote_amount_in` is the total the user paid.
+- Sell events: `quote_amount_out` is gross; `user_quote_amount_out` is net.
+
+So the realized buy fee is f = user_quote_amount_in / quote_amount_in − 1. Amendment 1 wrote the ratio inverted. The method is unchanged: fees on top, swap maths on S / (1 + f).
+
+Post-trade reserves when no later event exists:
+- Buy: rb − base_amount_out, rq + quote_amount_in_with_lp_fee.
+- Sell: rb + base_amount_in, rq − quote_amount_out_without_lp_fee.
+
+### Erratum 2 (2026-09-23, before any study statistic was computed; found by the engine's round-trip check)
+
+The registered sell formula priced the exit against the market state, which excludes the bettor's own buy. That charges price impact twice. A bet on a token with no trades between entry and exit returned a median of 0.911 over 5.03M such round trips, against the ~0.975 that two fees imply. Corrections:
+
+- **Curve phase.** The exit state includes the bettor's net SOL in the curve: vS' = vS_market + a, vT' = k / vS', with k = vS·vT constant on the curve.
+- **Pool phase, entered in the pool.** rq' = rqe_market + Q_net, rb' = rb_market · rqe_market / rq'.
+- **Curve entry with pool exit.** No adjustment: migration amounts do not depend on who bought.
+- **Peak.** The peak states get the same adjustments.
+- **Dust.** A holder whose sale would return less than the exit transaction fee does not sell: X = refund / cost basis (never negative).
+
+**Unregistered robustness check.** Because the registered gap rule drops dead-token bets disproportionately, the primary statistics are also reported with the gap rule off, labelled unregistered. The ruling uses the registered primary.
+
+## Erratum 3 (2026-10-15, after results were computed and seen)
+
+A review of the pricing code against the raw data found the defects below. Each fix restores the registered design. The earlier Study 1 numbers are superseded and stay in the repo history.
+
+1. **Curves not quoted in SOL.** 38,257 of the 1,146,417 census tokens (3.3%) have a bonding curve quoted in another token. A SOL curve starts at 30 SOL of virtual reserves; 33,253 of these start at 4,292 units of a 6-decimal dollar token and the rest at other values. Their trade records carry no SOL amounts or reserves, so every price point fell back to the create-event reserves and each bet returned its fees only.
+   - **Fix:** the registered pricing is in SOL, so these tokens are outside the design and leave the census. Their bets are dropped. With K = 5 bets per token, this equals drawing from the reduced census.
+2. **Graduation without a recorded event.** 907 SOL-curve census tokens completed their curve (real token reserves reached 0) but have no graduation event in the data; 906 of them then traded on a PumpSwap SOL pool. Entries after completion were dropped as unpriced (4,056 bets), and exits after migration were priced at the completed curve.
+   - **Fix:** t_grad = the block time of the completing curve trade; pool = the token's PumpSwap SOL pool with the most swaps. Checked on 2,683 tokens that do have the event: the same pool in 100%, and the event follows the completing trade by a median of 1 s (99th percentile 6 s).
+   - The pool-phase points of the 4,530 bets on these tokens are priced with the registered pool rules (Amendment 1, its erratum and Erratum 2), from supplementary Dune pulls that use the same queries.
+3. **Hourly transaction cost.** Transactions present in two overlapping txmeta files were counted twice in the hourly median. Each transaction now counts once (the table of Study 2 Erratum S2-E2). An hour with no transaction record takes the median of the hourly values; the code already did this, but the registration did not say so.
+4. **Recorded, not changed:**
+   - The listed gap hours cover the three longest collection outages but not all of them. The curve trade stream has 63 silences longer than 5 minutes (30.6 h in total), including outages of 10 to 95 minutes on other days, and the listed outages run slightly past the listed hours. The registered rule keeps the listed hours. An unregistered sensitivity applies the same rule to every silence longer than 5 minutes.
+   - Where the pricing trade carries no fee (a fee-free protocol wallet), the creator fee comes from the last fee-paying trade in that second, else the token's maximum.
+   - Most pool buy events record the fee ratio inverted against the erratum to Amendment 1. The buy fee is therefore taken as |max/min − 1| of the two recorded amounts, which gives the fee on top in both cases.

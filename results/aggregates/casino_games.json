@@ -1,0 +1,173 @@
+{
+ "European roulette, even-money": {
+  "rtp": 0.972972972972973,
+  "median_x": 0.0,
+  "win_rate": 0.4864864864864865,
+  "p_ge_10": 0.0,
+  "p_ge_100": 0.0,
+  "p_ge_1000": 0.0,
+  "jackpot_share_ge100": 0.0,
+  "max_x": 2.0
+ },
+ "European roulette, dozen": {
+  "rtp": 0.972972972972973,
+  "median_x": 0.0,
+  "win_rate": 0.32432432432432434,
+  "p_ge_10": 0.0,
+  "p_ge_100": 0.0,
+  "p_ge_1000": 0.0,
+  "jackpot_share_ge100": 0.0,
+  "max_x": 3.0
+ },
+ "European roulette, straight-up": {
+  "rtp": 0.972972972972973,
+  "median_x": 0.0,
+  "win_rate": 0.02702702702702703,
+  "p_ge_10": 0.02702702702702703,
+  "p_ge_100": 0.0,
+  "p_ge_1000": 0.0,
+  "jackpot_share_ge100": 0.0,
+  "max_x": 36.0
+ },
+ "American roulette, even-money": {
+  "rtp": 0.9473684210526315,
+  "median_x": 0.0,
+  "win_rate": 0.47368421052631576,
+  "p_ge_10": 0.0,
+  "p_ge_100": 0.0,
+  "p_ge_1000": 0.0,
+  "jackpot_share_ge100": 0.0,
+  "max_x": 2.0
+ },
+ "American roulette, dozen": {
+  "rtp": 0.9473684210526315,
+  "median_x": 0.0,
+  "win_rate": 0.3157894736842105,
+  "p_ge_10": 0.0,
+  "p_ge_100": 0.0,
+  "p_ge_1000": 0.0,
+  "jackpot_share_ge100": 0.0,
+  "max_x": 3.0
+ },
+ "American roulette, straight-up": {
+  "rtp": 0.9473684210526315,
+  "median_x": 0.0,
+  "win_rate": 0.02631578947368421,
+  "p_ge_10": 0.02631578947368421,
+  "p_ge_100": 0.0,
+  "p_ge_1000": 0.0,
+  "jackpot_share_ge100": 0.0,
+  "max_x": 36.0
+ },
+ "Craps, pass line": {
+  "rtp": 0.9858585858585859,
+  "median_x": 0.0,
+  "win_rate": 0.49292929292929294,
+  "p_ge_10": 0.0,
+  "p_ge_100": 0.0,
+  "p_ge_1000": 0.0,
+  "jackpot_share_ge100": 0.0,
+  "max_x": 2.0
+ },
+ "Baccarat (8 decks), banker": {
+  "rtp": 0.989420942157528,
+  "median_x": 1.0,
+  "win_rate": 0.458597422632763,
+  "p_ge_10": 0.0,
+  "p_ge_100": 0.0,
+  "p_ge_1000": 0.0,
+  "jackpot_share_ge100": 0.0,
+  "max_x": 1.95
+ },
+ "Baccarat (8 decks), player": {
+  "rtp": 0.9876491867108339,
+  "median_x": 1.0,
+  "win_rate": 0.44624660934359683,
+  "p_ge_10": 0.0,
+  "p_ge_100": 0.0,
+  "p_ge_1000": 0.0,
+  "jackpot_share_ge100": 0.0,
+  "max_x": 2.0
+ },
+ "Baccarat (8 decks), tie 8:1": {
+  "rtp": 0.8564037122127617,
+  "median_x": 0.0,
+  "win_rate": 0.0951559680236402,
+  "p_ge_10": 0.0,
+  "p_ge_100": 0.0,
+  "p_ge_1000": 0.0,
+  "jackpot_share_ge100": 0.0,
+  "max_x": 9.0
+ },
+ "Plinko 16 rows, high risk (Rainbet)": {
+  "rtp": 0.989764404296875,
+  "median_x": 0.2,
+  "win_rate": 0.210113525390625,
+  "p_ge_10": 0.004180908203125,
+  "p_ge_100": 0.000518798828125,
+  "p_ge_1000": 3.0517578125e-05,
+  "jackpot_share_ge100": 0.09496617600809062,
+  "max_x": 1000.0
+ },
+ "Crash 99% RTP, cash out at 2x": {
+  "rtp": 0.99,
+  "median_x": 0.0,
+  "win_rate": 0.495,
+  "p_ge_10": 0.0,
+  "p_ge_100": 0.0,
+  "p_ge_1000": 0.0,
+  "jackpot_share_ge100": 0.0,
+  "max_x": 2.0
+ },
+ "Crash 99% RTP, cash out at 10x": {
+  "rtp": 0.99,
+  "median_x": 0.0,
+  "win_rate": 0.099,
+  "p_ge_10": 0.099,
+  "p_ge_100": 0.0,
+  "p_ge_1000": 0.0,
+  "jackpot_share_ge100": 0.0,
+  "max_x": 10.0
+ },
+ "Crash 99% RTP, cash out at 100x": {
+  "rtp": 0.99,
+  "median_x": 0.0,
+  "win_rate": 0.0099,
+  "p_ge_10": 0.0099,
+  "p_ge_100": 0.0099,
+  "p_ge_1000": 0.0,
+  "jackpot_share_ge100": 1.0,
+  "max_x": 100.0
+ },
+ "Crash 99% RTP, cash out at 1000x": {
+  "rtp": 0.99,
+  "median_x": 0.0,
+  "win_rate": 0.00099,
+  "p_ge_10": 0.00099,
+  "p_ge_100": 0.00099,
+  "p_ge_1000": 0.00099,
+  "jackpot_share_ge100": 1.0,
+  "max_x": 1000.0
+ },
+ "_sweet_bonanza_survival": {
+  "source": "101rtp.net/slots/sweet-bonanza, 34,968,204 demo spins, measured RTP 96.40% (published 96.48/96.49/95.45)",
+  "rtp_published": 0.965,
+  "p_zero": 0.5708154506437768,
+  "survival": {
+   "10": 0.00980392156862745,
+   "100": 0.0007524454477050414,
+   "500": 2.5451768897938406e-05,
+   "1000": 2.3163912477473097e-06
+  },
+  "max_observed": 2417.1,
+  "max_theoretical": 21175
+ },
+ "_pending": [
+  "video poker 9/6 Jacks or Better (Wizard of Odds return table)",
+  "blackjack basic strategy outcome distribution",
+  "keno (casino-specific paytable)",
+  "lotteries: Mega-Sena, Powerball (official prize tiers)",
+  "Plinko low/medium risk multipliers",
+  "Fortune Tiger (PG Soft rules sheet)"
+ ]
+}

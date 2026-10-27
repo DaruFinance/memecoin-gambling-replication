@@ -1,0 +1,73 @@
+{
+ "q90_roi1": 1.023655860470707,
+ "wallets": [
+  [
+   false,
+   219726
+  ],
+  [
+   true,
+   24415
+  ]
+ ],
+ "profile": [
+  {
+   "top": false,
+   "positions": 19011022,
+   "wallets": 219726,
+   "med_entry_delay_s": 311.0,
+   "share_entry_le10s": 0.10059296128319667,
+   "share_entry_le60s": 0.2867551781277198,
+   "med_hold_s": 179.0,
+   "share_hold_le60s": 0.3568417310757938,
+   "med_stake_sol": 113803912.0,
+   "mean_stake_sol": 917926439.3870205,
+   "share_fully_exited": 0.8608544033035151,
+   "share_touch_pumpswap": 0.5516226323866229,
+   "rtp_all": 0.7692518583731952,
+   "win_rate": 0.24511664864729524,
+   "med_max_fills_per_hour": 37.0
+  },
+  {
+   "top": true,
+   "positions": 3488367,
+   "wallets": 24415,
+   "med_entry_delay_s": 117.0,
+   "share_entry_le10s": 0.187457913688554,
+   "share_entry_le60s": 0.41507673934537276,
+   "med_hold_s": 62.0,
+   "share_hold_le60s": 0.4962946845902395,
+   "med_stake_sol": 806088269.0,
+   "mean_stake_sol": 1486969564.456314,
+   "share_fully_exited": 0.962869732456476,
+   "share_touch_pumpswap": 0.31906705917123973,
+   "rtp_all": 1.0782811324610018,
+   "win_rate": 0.40635403327688857,
+   "med_max_fills_per_hour": 53.0
+  }
+ ],
+ "per_wallet": [
+  {
+   "top": false,
+   "med_positions": 34.0,
+   "med_active_days": 12.0,
+   "med_coins": 34.0
+  },
+  {
+   "top": true,
+   "med_positions": 43.0,
+   "med_active_days": 12.0,
+   "med_coins": 43.0
+  }
+ ],
+ "jackpot_share_half2": [
+  [
+   false,
+   0.6564562540971435
+  ],
+  [
+   true,
+   0.515574007563204
+  ]
+ ]
+}

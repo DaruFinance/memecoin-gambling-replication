@@ -1,0 +1,126 @@
+FREEZE part 1 - 2026-09-23 22:01:37 UTC
+No outcome statistic computed before this record.
+7e6aa728d8bddf7ef044bd34f8eb9a9aa710d6a188e76ce3ba20307ea40235f9  REGISTRATION.md
+9c733098204748ed95ac226c2ba2b30d3dfdf1760077aa78bc20780bee90090b  code/sample_bets.py
+0f319baf00c8c28176d322bb448a36b15c06dabc69cc0bad0b6e4acb40e984d3  code/casino_games.py
+5fdcf8b71e0b14f45b5d66744b6a279d9ee7e25c8a6ebcf20c69f2319a711fd2  data/bets_v2.parquet
+61ed65d47bb3ba9289b1ce3d42a1261273089f1858dc370d71ab156e4a02fb87  data/pool_lookups.parquet
+87c0648c75d1803717c65b0e74546ba3db97587699c7838e3ddc994e033e64df  data/pool_lookups_by_bet.parquet
+Pricing code hash is appended here before the first outcome computation.
+
+AMENDMENT 1 - 2026-09-23 22:09:42 UTC - approved; no outcome statistic computed.
+c199b56a751df7166b4fb68993570b28abc452752a6b87f2403487bee5e70900  REGISTRATION.md
+
+ERRATUM to Amendment 1 - 2026-09-23 22:15:56 UTC - definition fix, no outcome statistic computed.
+22523a8c5ef46c18cf089384efefa87522a6c84f4747f20ec1aa13b575c9e9b0  REGISTRATION.md
+
+FREEZE part 2 - 2026-09-23 22:51:48 UTC - pricing/assembly/stats code, before the first X is computed. Any later code change is logged here with its reason.
+1408a28e67a3641c99877fd6ea4943f510c8b622198e9c868943623f95c546a4  code/tsec_parts.py
+b5959d0d5be892f18559dad4966162b5c48ef667b11f04de7f994b9a173c1a42  code/price_curve.py
+8f84f27c9c3fd75ee3c648a610ec215dc6a9f9c2353f904833fe82c4350986d5  code/dune.py
+0e13414c029de9281fa5eefcf6193fb4b349f711b11509d67d65fa3eee9eaa56  code/dune_pool_state.py
+646a618e2ea324e1c8373691d61c34d9930b8b79b3f72e19dc8e8dfd1a333775  code/dune_pool_state_full.py
+eac1fd759cbac9311cd842439f0de22bfb5483608bac40f362170dccd2de9f7d  code/dune_entry_fee_and_peak.py
+b4df4130bb302bbd6c044caf0a67f06c38e20382e169dd3ebe47b68895e91eaf  code/assemble_x.py
+deb8d81e040910692e7155791ff46691aabbeea46bfbbad22207638b7e4d0443  code/control_btc_eth.py
+9bb250bba445ec4c9d967220acf2a8531952fe79e46ffe3adeab1fd663dbfe5e  code/stats_and_ruling.py
+CODE CHANGE 2026-09-23 22:52:34 UTC: control_btc_eth.py - localize naive-UTC bet times before the tz-aware Binance lookup (every lookup missed). Not an outcome-driven change: no control X existed.
+71779115618e500df07ab440cff85a809bf52e96b7c18d5a5a8cb739b136bd0a  code/control_btc_eth.py
+CODE CHANGE 2026-09-23 22:53:11 UTC: price_curve.py - cast naive-UTC bet times to TIMESTAMPTZ at load (DuckDB refused TIMESTAMP_NS vs TIMESTAMPTZ in the gap check). No X existed.
+772051b1115875e73a0f37bebceac6c958f7c8e24c553b39aa8aa39b245b9de4  code/price_curve.py
+CODE CHANGE 2026-09-23 22:56:21 UTC: price_curve.py - gap timestamp literals need seconds (conversion error); cache merged tsec to parquet. No X existed.
+ca90b3cd08afb916454254da9fdcacda56bb882e2b290539db81503e37c5afa7  code/price_curve.py
+
+ERRATUM 2 - 2026-09-23 23:04:43 UTC - own-impact pricing + no-dust-sale floor; unregistered gap-off robustness check added. No study statistic computed (only the engine's round-trip check).
+891c39128ad851c3ffde5f01e62bd70130f79012611fd02df95a56bfacae223c  REGISTRATION.md
+277b5388c3e5136515618940a1dc1a67bb448ce8baaed3b77ab43f1e57bd6074  code/assemble_x.py
+5f2a541281980bf3cc7df48f7bb71df21fa62292b2ca1ab634f4bbfbd1ae400f  code/stats_and_ruling.py
+
+STUDY 2 FREEZE - 2026-09-23 23:28:04 UTC - no per-wallet or per-position P&L computed. Field checks run before freeze: is_atomic set on 886k PumpSwap swaps; trade->txmeta signature join 100%, signer==trader 82%; venue share outside pump.fun 1.5%.
+8d53b180755f2f92ba423c5517ae0fdf6bee6d1ede270cb67a1367cca0adb61f  STUDY2_REGISTRATION.md
+STUDY 2 AMENDMENT S2-1 - 2026-09-23 23:28:51 UTC - creator-funded rule replaced (transfer data is token transfers, not SOL); conservative direction; Dune sample check registered. No P&L computed.
+cddc0f5f3106cd81a92ee2d2130d8894ab1505f43fbdb3bab9d115217bb1718f  STUDY2_REGISTRATION.md
+STUDY 2 AMENDMENT S2-2 - 2026-09-23 23:29:49 UTC - PumpSwap tx cost = hourly median. No P&L computed.
+cf0d5f1a04ea5b1d07dbad2e2510b4576145488938a6fe28a19a4e4b3a9b4576  STUDY2_REGISTRATION.md
+e3a933e8e5f308fd04a90a02096e5607362698833a0ed727bfa3bb69363e4aa1  code/s2_positions.py
+CODE CHANGE 2026-09-23 23:30:04 UTC: s2_positions.py alias cost->tcost (parser). No P&L computed.
+9bc09e475ac961e5d5a871edcd333777749e350ebb9b4272575bcf0fe2889a0b  code/s2_positions.py
+STUDY 2 CODE - 2026-09-23 23:35:24 UTC - analysis code before any P&L computed.
+ef28fbddd4377b884568788fe4eb99b5ae75536e064716e6552e68a77dfe84ab  code/s2_analyze.py
+7f7b4c1b1a951b69da5dc5502c51bb2038f856a8990b13c4fc15fe79c6306108  code/s2_final_pool_state.py
+STUDY 2 CODE - 2026-09-23 23:36:03 UTC - S2-1 funding sample script.
+2aae4372eb5ce04b61bf3d35a2f0cc38893704b9399f20ba727ebf669b1183a9  code/s2_funding_sample.py
+CODE CHANGE 2026-09-24 00:17:46 UTC: s2_funding_sample.py - epoch seconds from DuckDB; the pandas int64 cast of a us-resolution timestamp gave 1970 dates, so the first run matched 0 links (29.5 credits). Verified on 3 creators before rerun.
+05ad2133381958b69c2250924325bc1f0d012cd1e964d60440721050b940b887  code/s2_funding_sample.py
+CODE CHANGE 2026-09-24 00:22:02 UTC: s2_funding_sample.py - keep only funded wallets that traded the same token (raw pairs were 10.1M rows / 810 MB, over the free export limit; 24 credits, nothing downloaded).
+af3753fc3b0d5214c823df548eca79134b20d911adfbe669c039b17894c61eba  code/s2_funding_sample.py
+CODE CHANGE 2026-09-24 01:52:10 UTC: s2_analyze.py - memory cut (DuckDB 4 threads / 6 GB; integer wallet ids; robustness flags in SQL); adds the registered S2-1 funding-sample check. No P&L had been computed (first run killed during the merge).
+5343911d631b09f9a7ca094249abc7d0d461be362d0a6660ab058cabf2337e4a  code/s2_analyze.py
+CODE CHANGE 2026-09-24 01:55:49 UTC: s2_analyze.py - file-backed DuckDB on E: (in-memory tables of 62.4M positions OOMed at the 6 GB cap). No P&L computed.
+4462a7a3d37ca9da024da0bcd2c7b046b134a70ed4f3edf7e4fb76671a647b87  code/s2_analyze.py
+CODE CHANGE 2026-09-24 01:59:36 UTC: s2_analyze.py - bot-activity aggregation on hashed wallet keys with a lossless >25-per-part candidate filter (OOM at 6 GB). No P&L computed.
+67bd8d3b06ebe7740bd7ca87694d1f06719dd4d1ff30f3a367fd93a6257397f8  code/s2_analyze.py
+
+STUDY 3 FREEZE - 2026-10-10 20:30:24 UTC - no Hyperliquid or Polymarket outcome computed in this project (Polymarket prior exposure disclosed in the file).
+e2390276b296f642ae064fc906872ffdd09ca4c07a99d11fdf69c621d631b13d  STUDY3_REGISTRATION.md
+STUDY 3 CODE - 2026-10-10 20:30:43 UTC - HL streaming puller.
+95ca461cd6788d79b59d3f3ab9d67916bc875f2caf7397aef441b894867a0372  code/hl_pull.py
+STUDY 3 AMENDMENT S3-A1 - 2026-10-10 20:34:44 UTC - Polymarket reuses existing positions (biases stated, both against H1/H2); HL specifics; listed-memecoin arm with dead coins. No Study 3 outcome computed.
+688406cd48431bbd5cc899d9b120b6f46facceb931ae6c1436ac9ce75ccf810e  STUDY3_REGISTRATION.md
+STUDY 3 CODE - 2026-10-10 20:35:23 UTC - CoinGecko listed-memecoin arm (seeded per coin by crc32).
+ba36f2a1ae364e7e7b3da23e831b20eea4e6c28ce1beaaca580e4de6b05f37b9  code/cg_listed_arm.py
+STUDY 3 AMENDMENT S3-A2 - 2026-10-10 20:43:33 UTC - Polymarket moved to the shared Aug 8-Sep 18 window with full fills + CTF legs. No Study 3 outcome computed.
+122e294c21491ad9235a86555113c1e29da5056ddac0edb18ea808228170c24f  STUDY3_REGISTRATION.md
+
+STUDY 3 CODE - 2026-10-10 21:37:21 UTC - Hyperliquid episode builder, before any HL outcome computed. Data pulled: HL fills 38.79 GB, asset_ctxs 428 MB, vault list 9,477 addresses; Polymarket feed fills + CTF events + 2026-09-19 market snapshot.
+dc1769b56e703f23ef99734377d63a28702cd380f1ac501d6d63131a678b443e  code/hl_episodes.py
+95ca461cd6788d79b59d3f3ab9d67916bc875f2caf7397aef441b894867a0372  code/hl_pull.py
+
+STUDY 3 CODE - 2026-10-10 21:40:10 UTC - Polymarket position builder, shared Sweet Bonanza law module, Study 3 analysis. No Polymarket or Hyperliquid outcome computed.
+0b395e69097b8b899b988b8729250be10567a8c30abb9c29bf9fe842b7385839  code/pm_positions.py
+9f49f69dcefde7f38169c834d8a1bcac03b9bf36acbc494c2687fe92d65f7432  code/s2_analyze_laws.py
+ba0ba15dde52900c77eda770fa83cf93e8eac924bfded59bc9aa74163e6b274f  code/s3_analyze.py
+CODE CHANGE 2026-10-10 21:40:45 UTC: hl_episodes.py - column 'after' renamed 'pos_after' (reserved word; parser error). No HL outcome computed.
+c635f2f7e636f2ea51a53cff48554c2954fac7e0ea5aa48180b872eedc0eda24  code/hl_episodes.py
+a452d9f1d8227145cf32bd9d0722843aee66adcfc71029bc981c49ea847d7d44  code/run_guarded.sh
+CODE CHANGE 2026-10-10 22:33:44 UTC: pm_positions.py - token map built from extracted JSON fields (raw_json dedup OOMed at 6 GB). No Polymarket outcome computed.
+fa8306f15f95769366db84757d783d81edf30b206a446b231ed5f67b45528047  code/pm_positions.py
+0dfa483df05715bd8fa829ba3c9a243f563dbf0a5bdba1339094f61c4b8f9bbd  code/s3_validate.py
+CODE CHANGE 2026-10-10 22:34:39 UTC: hl_episodes.py - legs ordered by execution order (hour file, then row order) instead of timestamp; chain-break diagnostic added. Reason: closed-episode identity check (cash-flow P&L vs closedPnl) matched only 77.4% within 1 cent. Episodes rebuilt; the earlier build is discarded.
+08c859708c76736866873b8bcb78e95a5629767f6ac5b5e613771fcf3596ec4a  code/hl_episodes.py
+CODE CHANGE 2026-10-10 22:37:13 UTC: pm_positions.py - user-level split/merge rows selected via the ~1.3k split/merge addresses (OOM at 6 GB); same result. No Polymarket outcome computed.
+ea8cf2ed9ee96c6603fada29e9d08454f3ac661c8e77cdfe28d1a646eb569342  code/pm_positions.py
+STUDY 3 AMENDMENT S3-A3 - 2026-10-11 01:15:55 UTC - Polymarket gaps found by validation (no neg-risk fills; token map 2.5%); remedies registered. No Polymarket outcome statistic computed.
+ff77f23a8c9febe695a2464a58821e6608ea480ef83174633e93f3b4d022f450  STUDY3_REGISTRATION.md
+STUDY 3 AMENDMENT S3-A4 - 2026-10-11 01:25:11 UTC - Polymarket fills completed from chain via Alchemy (second V2 exchange + adapter); decoder gate vs the existing fill feed; completeness bar <2% missing. No Polymarket outcome statistic computed.
+50be0d72d58d9d2ec3110f8266174acbbbb28e941d793cbc7abb19148c4bbccf  STUDY3_REGISTRATION.md
+e806d68426ee39c9774812e5dd214d5c6a33859ec759078030112700c613cac9  code/pm_chain_common.py
+STUDY 3 AMENDMENT S3-A5 - 2026-10-11 20:17:32 UTC - Polymarket source = the completed on-chain fill dataset (gate/completeness met), fees included, combo exchange excluded, neg-risk adapter side legs + conversion rule, resolutions from the market metadata table of 10-03 (resolved_at <= END). No Polymarket outcome statistic computed.
+f7e28c6b82522de912298356618011e852f8cfedaf023ef68a43b4d5d15192c6  STUDY3_REGISTRATION.md
+STUDY 3 ERRATUM S3-E1 - 2026-10-11 22:26:31 UTC - after first results (3300d2a) were seen: day-bucket rounding bug, per-venue halves, H5 null for top-decile, PM NULL payouts, conversion YES value, binary collateral adapter 0xada100db00ca pending. First-run numbers superseded.
+5806f5841a5c7fa299dbd0b0e12c01c48829fce72fa2051db39fbcbcad35e09f  STUDY3_REGISTRATION.md
+STUDY 3 ERRATUM S3-E1 item 5 corrected - 2026-10-11 22:27:32 UTC - conversions booked as exchange at market (YES cash in at last price before conversion; NO cash out = USDC + YES market value). No computation under S3-E1 yet.
+774a010b005fda17e5efe27a2a425d61bfd2ff5d1bb2c665d437c5555f3afd24  STUDY3_REGISTRATION.md
+STUDY 3 ERRATUM S3-E2 + STUDY 2 ERRATUM S2-E1 - 2026-10-12 12:51:56 UTC - second blind audit: overlapping-file duplicates in memecoin positions, HL liquidation flag (crossed, non-ADL), '#' coins excluded, listed-arm candle timing/token side/retries. Affected results superseded.
+9f008cd79a3deba149a78da1ca08fb0273c1834ed1eb756ab012039b2bbfd91d  STUDY3_REGISTRATION.md
+c592d9301b26471fd8810133dfc4924b533b6456953defaa5b371ca9252ff1fd  STUDY2_REGISTRATION.md
+STUDY 2 ERRATUM S2-E2 + STUDY 3 ERRATUM S3-E3 - 2026-10-13 16:18:21 UTC - PumpSwap leg tx cost corrected from one window-wide median to the registered hourly median (Amendment S2-2); memecoin arm and its secondaries to be recomputed. No computation under the corrected rule yet.
+0db8b855ec93d16cf0fed4e20d56d3d6a9e58d042aee98b6dbd154a0a611f96d  STUDY2_REGISTRATION.md
+221344680994838395801b575af416fbf9831b8cb1f98d0b59467c5496cee125  STUDY3_REGISTRATION.md
+STUDY 1 ERRATUM 3 + STUDY 2 ERRATUM S2-E3 + STUDY 3 ERRATUM S3-E4 - 2026-10-15 03:53:19 UTC - after S2-E2/S3-E3 results were seen: curves not quoted in SOL leave the census; graduation inferred from the completing curve trade where no event was recorded (pool from Dune); deduplicated hourly tx cost; PumpSwap legs timed by slot clock; swaps deduplicated across all files; end-of-data cut; first-create creator; final-trade creator fee; H1/H2 at the 97.5% bound with paired H2 bootstrap; missing registered robustness rows added. No computation under these fixes yet.
+114371631f81ef419c5788264dbe0d0201a168dd5d5bec865b2b9f6dc0727523  REGISTRATION.md
+d1227456ed87ec3c86916ea4ab34e2ca8619661edb73897108db8910e1dd5ba8  STUDY2_REGISTRATION.md
+b6d75477b490201429bd3e47d90dac5209376bbfac0207d0541460f9723e24ba  STUDY3_REGISTRATION.md
+ed5e96b6e1d02e1ea04a41d97e5404e8266358ac4e0149c402663de78c15a110  code/erratum_final_inputs.py
+93333d8057b5813c3df37f222832282745e35b6f457e82152a27ba9444d9ebfd  code/dune_final_erratum.py
+9545aa68f629292d97af5bb165e7fc88cc95162b9df1180af4ad1f4bdff28a54  code/s2_slot_time.py
+bc057f39fc21741f90ea14d71e9d0306ff140b577fd00c94d049dad485930bd4  code/s2_positions_v2.py
+f7acdb61b13936374e2fae4edaac2e691e7163451d996c9b2223ef7f4166240c  code/s2_analyze.py
+c0bd9684f6852eea2be756b6ebc84ad631fcd6d2c763bf38cff8c434078c1adb  code/s3_analyze.py
+e269fe8a4d915edf9296b4919e4a9f2d47f77314eb0523a60daadf4fe4659ac9  code/price_curve.py
+7d48f0231ea8ddac12d34832f4a67dd827bba7bab4ccf5c9bdf82c5b1fc8662e  code/assemble_x.py
+579c6a421c9f18a8009268560e3d5f12b553808a34a82e9faceac7db5286047e  code/stats_and_ruling.py
+
+CODE CHANGE 2026-10-15 17:51:02 UTC: s2_positions_v2.py - file-backed DuckDB and a 2.5 GB memory limit (1.2 GB ran out of memory on a two-file group). Same rows; no rule changed.
+CODE CHANGE 2026-10-15 17:51:02 UTC: assemble_x.py - curve points split into one file per role and the output written through DuckDB (memory); memory prints added. Same rows; no rule changed.
+CODE CHANGE 2026-10-15 17:51:02 UTC: s3_meme_topdecile_profile.py, s3_explore_cuts.py, s2_transfer_sensitivity.py - DuckDB memory limit 1.5 GB to 4 GB (out of memory). Exploratory and secondary only; no rule changed.

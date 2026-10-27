@@ -1,0 +1,25 @@
+{
+ "curve_only": {
+  "positions": 17902878,
+  "sol_in": 1.0585976869117446e+16,
+  "rtp": 0.9009028311595307,
+  "share_of_retail_loss": 0.0918508608023305
+ },
+ "touched_pool": {
+  "positions": 26211907,
+  "sol_in": 3.576520449836305e+16,
+  "rtp": 0.7099950438198086,
+  "share_of_retail_loss": 0.9081491391976695
+ },
+ "no_dust": {
+  "positions": 40221786,
+  "rtp": 0.7536257080185992,
+  "share_wallets_ahead": 0.1504260532547872,
+  "wallets": 6284543
+ },
+ "wallets_staking_0.1_sol_or_more": {
+  "wallets": 3574738,
+  "share_ahead": 0.19934300080173709,
+  "rtp": 0.7544658366984189
+ }
+}
